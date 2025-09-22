@@ -1,6 +1,4 @@
 // this code is a test to solve the problem using brute force
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;

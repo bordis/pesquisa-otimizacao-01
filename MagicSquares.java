@@ -57,7 +57,7 @@ public class MagicSquares {
                 return false;
             }
         }
-        // validate the collums and X
+        // validate the collums and the diagonals
         int sumDiagonalsED = 0;
         int sumDiagonalsDE = 0;
 
