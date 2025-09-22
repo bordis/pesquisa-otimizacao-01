@@ -7,21 +7,28 @@ import java.util.Scanner;
 
 public class MagicSquares {
 
-    public static int size = 3;
+    public static int size = 0;
+    public static int interactions = 0;
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
 
-        int interactions = 0;
-
-        // System.out.print("Enter the size of the board: ");
-        // size = sc.nextInt();
+        System.out.print("Enter the size of the board: ");
+        size = sc.nextInt();
         long inicio = System.currentTimeMillis();
 
-        System.out.println("Init the Magic Square puzzle N = " + size);
-
+        int magicNumber = ((size * size * size) + size) / 2;
+        System.out.println("Init the Magic Square puzzle N = " + size + ". Magic number: " + magicNumber);
         int[][] board = generateBoard();
+
+        while (true) {
+            if (!validateBoard(board, magicNumber)) {
+                board = generateBoard();
+            } else {
+                break;
+            }
+        }
 
         printBoard(board);
 
@@ -34,6 +41,37 @@ public class MagicSquares {
 
         sc.close();
 
+    }
+
+    public static boolean validateBoard(int[][] board, int magicNumber) {
+        interactions++;
+        int[] sumCollum = new int[size];
+        // validate the lines and the collums
+        for (int x = 0; x < size; x++) {
+            int sumLine = 0;
+            for (int y = 0; y < size; y++) {
+                sumCollum[y] = sumCollum[y] + board[x][y];
+                sumLine = sumLine + board[x][y];
+            }
+            if (sumLine != magicNumber) {
+                return false;
+            }
+        }
+        // validate the collums and X
+        int sumDiagonalsED = 0;
+        int sumDiagonalsDE = 0;
+
+        for (int x = 0; x < size; x++) {
+            sumDiagonalsED += board[x][x];
+            sumDiagonalsDE += board[x][size-1-x];
+            if (sumCollum[x] != magicNumber) {
+                return false;
+            }
+        }
+        if(sumDiagonalsDE != magicNumber || sumDiagonalsED != magicNumber){
+            return false;
+        }
+        return true;
     }
 
     public static int[][] generateBoard() {
