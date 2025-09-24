@@ -1,77 +1,68 @@
-// this code is a test to solve the problem using brute force
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Queens {
 
-    public static int size;
-    public static int interactions = 0;
+    public static int size = 0;
 
     public static void main(String[] args) {
-
         Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter the size of the board: ");
+        System.out.print("Enter the board size: ");
         size = sc.nextInt();
+        long countTimeInit = System.currentTimeMillis();
 
-        System.out.println("The size going to be: " + size);
+        // generate all permutations of size of the board
+        Perm perm = new Perm(size);
 
-        long inicio = System.currentTimeMillis();
-        System.out.println("Init the N Queens puzzle");
+        // just to see all perm
+        // for (List<Integer> valores : perm) {
+        //     System.out.println(valores);
+        // }
 
-        int[][] board = generateQuenns();
+        // list to store all solutions
+        List<int[]> solutions = new ArrayList<>();
 
-        while (true) {
-            if (!validateBoard(board)) {
-                board = generateQuenns();
-            } else {
-                break;
+        for (List<Integer> candidate : perm) {
+            // System.err.println(candidate);
+            int[] queens = new int[candidate.size()];
+
+            // convert to int[]
+            for (int i = 0; i < candidate.size(); i++) {
+                queens[i] = candidate.get(i);
+            }
+
+            // check if the solution is valid
+            // where the index is the column and the value is the row
+            // print the board only to see the positions to test
+            // printBoard(queens);
+            if (isValid(queens)) {
+                // coment the prints to improve execution time
+                // System.out.println("Solution found:");
+                // printBoard(queens);
+                solutions.add(queens);
             }
         }
 
-        printBoard(board);
-
-        long fim = System.currentTimeMillis();
-        long duracao = fim - inicio;
-        double segundos = duracao / 1000.0;
-
-        System.out.printf("Execution time: %.2f s%n", segundos);
-        System.out.println("It was necessary " + interactions + " interactions!");
-
+        long countTimeEnd = System.currentTimeMillis();
+        long countExecutionTime = countTimeEnd - countTimeInit;
+        double seconds = countExecutionTime / 1000.0;
+        System.out.println("Total of possibilities: " + solutions.size());
+        System.out.printf("Execution time: %.2f s%n", seconds);
         sc.close();
-
     }
 
-    // function to validate the board
-    public static boolean validateBoard(int[][] board) {
-        interactions++;
-        // not allow queens in the same line
-        Set<Integer> line = new HashSet<>();
-        int[] positions = new int[size];
-        for (int x = 0; x < size; x++) {
-            int quennLine = 0;
-            for (int y = 0; y < size; y++) {
-                if (board[x][y] == 1) {
-                    quennLine = y;
-                }
-            }
-            // quick check, HashSet dont allow sames values, so its must be one queen in diferente line position
-            if (!line.add(quennLine)) {
-                return false;
-            } else {
-                positions[x] = quennLine;
-            }
-        }
-        // for all the quenns
-        // dont compare with the last queen, already compare int the loop
-        for (int i = 0; i < positions.length - 1; i++) {
-            // get the quem possition of the +1 i, to not compare with the same queen
-            for (int j = i + 1; j < positions.length; j++) {
-                // do the calc line x position, if the result is equal is in a invalid position
-                // first contidion have the absolute of the line and second of the columm
-                if (Math.abs(i - j) == Math.abs(positions[i] - positions[j])) {
+    // validate if the queens positions are valid
+    private static boolean isValid(int[] queens) {
+        // need to check if two queens are in the same diagonal
+        // perm class already guarantee that no two queens are in the same row or column
+        for (int i = 0; i < size; i++) {
+            // for to not repeat board positions
+            for (int j = i + 1; j < size; j++) {
+                // calculate the difference
+                int dx = j - i;
+                // asb to get the positive value/distance
+                int dy = Math.abs(queens[j] - queens[i]);
+                // if the difference is the same, they are in the same diagonal
+                if (dy == dx) {
                     return false;
                 }
             }
@@ -79,34 +70,19 @@ public class Queens {
         return true;
     }
 
-    // funtion to generate random quenns
-    public static int[][] generateQuenns() {
-        int[][] board = new int[size][size];
-        for (int x = 0; x < size; x++) {
-            Random rand = new Random();
-            int quenn = rand.nextInt(size);
-            for (int y = 0; y < size; y++) {
-                if (y == quenn) {
-                    board[x][y] = 1;
-                }
-            }
-        }
-        return board;
-    }
-
     // function to print the board
-    public static void printBoard(int[][] board) {
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                if (board[x][y] == 1) {
-                    System.out.print("  x");
+    // just to see the positions to test 
+    private static void printBoard(int[] queens) {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if (queens[col] == row) {
+                    System.out.print(" x");
                 } else {
-                    System.out.print("  o");
+                    System.out.print(" o");
                 }
-
             }
             System.out.println();
         }
+        System.out.println();
     }
-
 }
