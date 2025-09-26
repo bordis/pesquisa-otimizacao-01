@@ -10,7 +10,7 @@ public class Queens {
         size = sc.nextInt();
         long countTimeInit = System.currentTimeMillis();
 
-        // generate all permutations of size of the board
+        // generate all perm of size of the board
         Perm perm = new Perm(size);
 
         // just to see all perm
